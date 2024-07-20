@@ -34,6 +34,7 @@ const Content = styled.section`
     justify-content: space-between;
     flex-direction: column;
     height: 350px;
+    // height: calc(100%-200px);
     padding: 30px;
 `;
 

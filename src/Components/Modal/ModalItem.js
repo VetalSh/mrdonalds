@@ -1,6 +1,10 @@
 import React from "react";
 import styled from "styled-components";
-import { ButtonCheckout } from "./ButtonCheckout";
+import { ButtonCheckout } from "../Style/ButtonCheckout";
+import { CountItem } from "./CountItem";
+import { useCount } from "../Hooks/useCount";
+import { totalPriceItems } from "../Functions/secondaryFunctions";
+import { formatCurrency } from "../Functions/secondaryFunctions";
 
 const Overlay = styled.div`
     position: fixed;
@@ -46,15 +50,30 @@ const HeaderContent = styled.div`
     font-family: 'Pacifico', cursive;
 `;
 
-export const ModalItem = ({ openItem, setOpenItem }) => {
+const TotalPriceItem = styled.div`
+    display: flex;
+    justify-content: space-between;
+`;
 
-    function closeModal(e) {
+export const ModalItem = ({ openItem, setOpenItem, orders, setOrders }) => {
+
+    const counter = useCount();
+
+    const closeModal = e => {
         if (e.target.id === 'overlay') {
             setOpenItem(null);
         }
     }
 
-    if (!openItem) return null;
+    const order = {
+        ...openItem,
+        count: counter.count
+    };
+
+    const addToOrder = () => {
+        setOrders([...orders, order])
+        setOpenItem(null);
+    };
 
     return (
         <Overlay id="overlay" onClick={closeModal}>
@@ -63,11 +82,14 @@ export const ModalItem = ({ openItem, setOpenItem }) => {
                 <Content>
                     <HeaderContent>
                         <div>{openItem.name}</div>
-                        <div>{openItem.price.toLocaleString('uah',
-                            { style: 'currency', currency: 'UAH' }
-                        )}</div>
+                        <div>{formatCurrency(openItem.price)}</div>
                     </HeaderContent>
-                    <ButtonCheckout>Add</ButtonCheckout>
+                    <CountItem {...counter} />
+                    <TotalPriceItem>
+                        <span>Price:</span>
+                        <span>{formatCurrency(totalPriceItems(order))}</span>
+                    </TotalPriceItem>
+                    <ButtonCheckout onClick={addToOrder}>Add</ButtonCheckout>
                 </Content>
             </Modal>
         </Overlay>

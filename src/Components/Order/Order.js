@@ -47,7 +47,20 @@ const EmptyList = styled.p`
     text-aligh: center;
 `;
 
-export const Order = ({ orders }) => {
+export const Order = ({ orders, setOrders }) => {
+
+    // first version deleteItem() function
+    // const deleteItem = index => {
+    //     const newOrders = [...orders];
+    //     newOrders.splice(index, 1);
+    //     setOrders(newOrders);
+    // };
+
+    // second version deleteItem() function
+    const deleteItem = index => {
+        const newOrders = orders.filter((item, i) => index !== i);
+        setOrders(newOrders);
+    };
 
     const total = orders.reduce((result, order) =>
         totalPriceItems(order) + result, 0)
@@ -61,7 +74,12 @@ export const Order = ({ orders }) => {
             <OrderContent>
                 {orders.length ?
                     <OrderList>
-                        {orders.map(order => <OrderListItem order={order} />)}
+                        {orders.map((order, index) => <OrderListItem
+                            key={index}
+                            order={order}
+                            deleteItem={deleteItem}
+                            index={index}
+                        />)}
                     </OrderList> :
                     <EmptyList>Your order list is empty!</EmptyList>}
 
